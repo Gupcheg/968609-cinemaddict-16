@@ -1,6 +1,6 @@
 # Проект «Киноман»
 
-* Студент: [Павел Губарев](https://up.htmlacademy.ru/ecmascript/16/user/968609).
+* Студент:  [Павел Губарев](https://up.htmlacademy.ru/ecmascript/16/user/968609).
 * Наставник: [Сергей Сергеев] (https://htmlacademy.ru/profile/id1205257).
 
 ---
