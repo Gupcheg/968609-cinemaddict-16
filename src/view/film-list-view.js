@@ -1,4 +1,5 @@
 import {getDate, changeWord, addClassBySubmit} from '../utils.js';
+import {createElement} from '../render.js';
 
 export const createFilmCardTemplate = (film) => {
   const {title, runtime, genre, description, poster} = film['film_info'];
@@ -7,9 +8,7 @@ export const createFilmCardTemplate = (film) => {
   const {watchlist} = film['user_details'];
   const watchFilm = film['user_details']['already_watched'];
   const favorite = film['user_details']['favorite'];
-
   const year = getDate(date, 'YYYY');
-
   const getTime = () => {
     const hours = Math.trunc(runtime/60);
     const minutes = runtime % 60;
@@ -17,11 +16,9 @@ export const createFilmCardTemplate = (film) => {
   };
 
   const getDescription = () => {
-    const text = description.join(' ');
-    const correctText = text.length > 139 ? `${text.slice(0, 139)}...` : text;
+    const correctText = description.length > 139 ? `${description.slice(0, 139)}...` : description;
     return correctText;
   };
-
 
   return `<article class="film-card">
   <a class="film-card__link">
@@ -44,11 +41,28 @@ export const createFilmCardTemplate = (film) => {
 </article>`;
 };
 
-export const createFilmListTemplate = () => (
-  `<section class="films">
-    <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-      <div class="films-list__container"></div>
-    </section>
-  </section>`
-);
+export default class FilmCard {
+  #element = null;
+  #film = null;
+
+  constructor(film) {
+    this.#film = film;
+  }
+
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template(){
+    return createFilmCardTemplate(this.#film);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

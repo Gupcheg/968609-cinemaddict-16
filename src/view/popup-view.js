@@ -1,4 +1,5 @@
 import {getDate, changeWord, addClassBySubmit} from '../utils.js';
+import {createElement} from '../render.js';
 
 const renderFilmDetailsTable = (name, value) => (
   `<tr class="film-details__row">
@@ -7,7 +8,7 @@ const renderFilmDetailsTable = (name, value) => (
 </tr>`
 );
 
-const renderElementGanre = (array) => {
+const renderElementGenre = (array) => {
   if (array.length > 0) {
     const box = [];
     for (const element of array)
@@ -15,16 +16,12 @@ const renderElementGanre = (array) => {
     return box;
   }
 };
-
 const createCommentTemplate = (commentId, array) => {
   const commentBox = [];
-
   for (const element of array) {
     if (commentId.includes(element.id)) {
-
       const {author, comment, date, emotion} = element;
       const formatedDate = getDate(date, 'YYYY/MM/DD HH:mm');
-
       commentBox.push(`<li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -43,9 +40,9 @@ const createCommentTemplate = (commentId, array) => {
   return commentBox;
 };
 
-export const createFilmPopuptTemplate = (film, array) => {
-  const {title, runtime, genre, description, poster, director, writers, actors} = film['film_info'];
-  const rating = film['film_info']['total_rating'];
+const createFilmPopupTemplate = (film, array) => {
+  const {title, runtime, genre, description, poster, director, writers, actors} = film.film_info;
+  const rating = film.film_info.total_rating;
   const date = film['film_info']['release']['date'];
   const {watchlist} = film['user_details'];
   const watchFilm = film['user_details']['already_watched'];
@@ -53,16 +50,12 @@ export const createFilmPopuptTemplate = (film, array) => {
   const ageRating = film['film_info']['age_rating'];
   const alternativeTitle = film['film_info']['alternative_title'];
   const country = film['film_info']['release']['release_country'];
-
-
   const dateFormat = getDate(date, 'D MMMM YYYY');
-
   const getTime = () => {
     const hours = Math.trunc(runtime/60);
     const minutes = runtime % 60;
     return `${hours}h ${minutes}м`;
   };
-
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
@@ -91,10 +84,10 @@ export const createFilmPopuptTemplate = (film, array) => {
               ${renderFilmDetailsTable('Release Date', dateFormat)}
               ${renderFilmDetailsTable('Runtime', getTime())}
               ${renderFilmDetailsTable('Country', country)}
-              ${renderFilmDetailsTable(changeWord(genre, 'Genre'), renderElementGanre(genre).join(' '))}
+              ${renderFilmDetailsTable(changeWord(genre, 'Genre'), renderElementGenre(genre).join(' '))}
             </table>
            <p class="film-details__film-description">
-            ${description.join(' ')}
+            ${description}
             </p>
           </div>
         </div>
@@ -139,3 +132,30 @@ export const createFilmPopuptTemplate = (film, array) => {
     </form>
   </section>`;
 };
+
+export default class Popup {
+  #element = null;
+  #film = null;
+  #array = null;
+
+  constructor(film, array) {
+    this.#film = film;
+    this.#array = array;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template(){
+    return createFilmPopupTemplate(this.#film, this.#array,);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
