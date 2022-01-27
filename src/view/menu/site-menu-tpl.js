@@ -1,4 +1,4 @@
-import { getFirstToUpperCase } from '../../utils/menu.js';
+import {getFirstToUpperCase} from '../../utils/getFirstToUpperCase.js';
 
 const createMenuItemTemplate = (filter) => {
   const {name, count} = filter;
@@ -6,7 +6,6 @@ const createMenuItemTemplate = (filter) => {
     `<a href="#${name}" class="main-navigation__item">${getFirstToUpperCase(name)} <span class="main-navigation__item-count">${count}</span></a>`
   );
 };
-
 export const createSiteMenuTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createMenuItemTemplate(filter, index === 0))
