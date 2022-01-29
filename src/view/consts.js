@@ -23,3 +23,4 @@ export const FILM_BLOCKS = {
   }
 };
 
+export const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
