@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-
 const FILM_TITLES = [
   'Made for each other',
   'Popeye meets sinbad',
@@ -9,7 +8,6 @@ const FILM_TITLES = [
   'The great flamarion',
   'The man with the golden arm'
 ];
-
 const FILM_POSTERS = ['images/posters/made-for-each-other.png',
   'images/posters/popeye-meets-sinbad.png',
   'images/posters/sagebrush-trail.jpg',
@@ -17,7 +15,6 @@ const FILM_POSTERS = ['images/posters/made-for-each-other.png',
   'images/posters/the-dance-of-life.jpg',
   'images/posters/the-great-flamarion.jpg',
   'images/posters/the-man-with-the-golden-arm.jpg',];
-
 const DESCRIPTION = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -31,9 +28,10 @@ const DESCRIPTION = [
   'Nunc fermentum tortor ac porta dapibus.',
   'In rutrum ac purus sit amet tempus.',
 ];
+
 const COMMENTS_ARRAY = [
   {
-    'id': '42',
+    'id': '0',
     'author': 'Ilya O\'Reilly',
     'comment': 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
     'date': '2019-05-11T16:12:32.554Z',
@@ -88,6 +86,16 @@ const getRandomLength = (array) => {
   return copyArray;
 };
 
+const shuffle = (array) => {
+  for (let nbr = array.length - 1; nbr > 0; nbr--) {
+    const num = Math.floor(Math.random() * (nbr + 1));
+    const swat = array[num];
+    array[num] = array[nbr];
+    array[nbr] = swat;
+  }
+  return array;
+};
+
 const createIdGenerator = () => {
   let lastGeneratedId = 0;
 
@@ -109,6 +117,13 @@ const generateDate = () => {
   return dayjs().add(yearsGap, 'year').toDate();
 };
 
+const generateDateWatching = () => {
+  const maxDaysGap = 60;
+  const daysGap = getRandomInteger(-maxDaysGap, 0);
+
+  return dayjs().add(daysGap, 'day').toDate();
+};
+
 const generateFilm = () => ({
   'id': generateFilmId().toString(),
   'comments': getCommentId(),
@@ -126,15 +141,14 @@ const generateFilm = () => ({
       'release_country': 'Finland',
     },
     'runtime': getRandomInteger(50, 200),
-    'genre': getRandomLength(GENRES),
+    'genre': getRandomLength(shuffle(GENRES)),
     'description': getRandomLength(DESCRIPTION).join(' '),
   },
   'user_details': {
     'watchlist': generateBoolean(),
     'already_watched': generateBoolean(),
-    'watching_date': dayjs().toDate(),
+    'watching_date': generateDateWatching(),
     'favorite': generateBoolean(),
   }
 });
-
 export {generateFilm, COMMENTS_ARRAY};

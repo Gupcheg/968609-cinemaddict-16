@@ -1,18 +1,21 @@
 import {createFilmCardTemplate} from './film-card-tpl.js';
-import AbstractView from '../abstract-view.js';
 import {createElement} from '../../utils/render.js';
+import AbstractView from '../abstract-view.js';
 
 export default class FilmCard extends AbstractView {
   #film = null;
   #renderedFilms = [];
-
   constructor(film) {
     super();
     this.#film = film;
   }
 
-  get template(){
+  get template() {
     return createFilmCardTemplate(this.#film);
+  }
+
+  get renderedFilms() {
+    return this.#renderedFilms;
   }
 
   createCopy() {
@@ -21,13 +24,8 @@ export default class FilmCard extends AbstractView {
     copy.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#watchlistClickHandler);
     copy.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#historyClickHandler);
     copy.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#favoriteClickHandler);
-
     this.#renderedFilms.push(copy);
     return copy;
-  }
-
-  get renderedFilms() {
-    return this.#renderedFilms;
   }
 
   setFilmClickHandler = (callback) => {
