@@ -2,25 +2,11 @@ import {createFilmPopupTemplate} from './popup-tpl.js';
 import SmartView from '../smart-view.js';
 import {createElement, render, RenderPosition} from '../../utils/render.js';
 
-const createIdGenerator = () => {
-  let lastGeneratedId = 4;
-
-  return function () {
-    lastGeneratedId += 1;
-    return lastGeneratedId;
-  };
-};
-
-const generateCmmentId = createIdGenerator();
-
 export default class Popup extends SmartView {
-  #film = null;
-  #array = null;
   #container = null;
   #element = null;
   userEmoji = null;
   userComment = '';
-
   constructor(film, comments) {
     super();
     this._data = Popup.parseFilmToData(film);
@@ -39,13 +25,14 @@ export default class Popup extends SmartView {
       render(this.#container, this.#element, RenderPosition.BEFOREEND);
       document.getElementById(`emoji-${this.userEmoji}`).setAttribute('checked', 'true');
     }
-
     if (this.userComment) {
       document.querySelector('.film-details__comment-input').textContent = this.userComment;
     }
   }
 
   reset = (film) => {
+    this.userEmoji = null;
+    this.userComment = '';
     this.updateData(
       Popup.parseFilmToData(film),
     );
@@ -103,7 +90,6 @@ export default class Popup extends SmartView {
       checkedEmojiItem: evt.target.id,
       comment: this.userComment
     });
-
   }
 
   #descriptionInputHandler = (evt) => {
@@ -138,7 +124,12 @@ export default class Popup extends SmartView {
       evt.preventDefault();
       const commentId = evt.target.dataset.commentId;
       this._callback.clickDelete(commentId);
+
+      const deleteButton = document.querySelector(`[data-comment-id="${commentId}"]`);
+      deleteButton.disabled = true;
+      deleteButton.textContent = 'Deleting...';
     }
+
   }
 
   #formKeydownHandler = (evt) => {
@@ -147,13 +138,11 @@ export default class Popup extends SmartView {
         return;
       }
       const newComment = {
-        id: String(generateCmmentId()),
-        author: 'Ilya O\'Reilly',
+        id: 0,
         comment: this._data.comment,
-        date: new Date(),
         emotion: this._data.emojiIcon,
       };
-      this._callback.formKeydown(newComment, newComment.id);
+      this._callback.formKeydown(newComment);
     }
   }
 
@@ -162,6 +151,7 @@ export default class Popup extends SmartView {
     checkedEmojiItem: '',
     comment: '',
     isDisabled: false,
+    deletedCommentId: '',
   });
 
   static parseDataToFilm = (data) => {
@@ -170,6 +160,8 @@ export default class Popup extends SmartView {
     delete film.checkedEmojiItem;
     delete film.comment;
     delete film.isDisabled;
+    delete film.deletedCommentId;
+
     return film;
   };
 }

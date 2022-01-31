@@ -2,9 +2,7 @@ import {changeWord, addClassBySubmit} from '../../utils/common.js';
 import {EMOJIS} from '../../consts.js';
 import FormatTime from '../../utils/format-time.js';
 import he from 'he';
-
 const addCheckedProperty = (isChecked) => isChecked ? 'checked' : '';
-
 const renderFilmDetailsTable = (name, value) => (
   `<tr class="film-details__row">
   <td class="film-details__term">${name}</td>
@@ -19,23 +17,20 @@ const renderElementGenre = (array) => {
     return box;
   }
 };
-
 export const createControlTemplate = (data) => (`<section class="film-details__controls">
 <button type="button" class="film-details__control-button ${addClassBySubmit(data.user_details.watchlist, 'film-details__control-button--active')} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
 <button type="button" class="film-details__control-button ${addClassBySubmit(data.user_details.already_watched, 'film-details__control-button--active')} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
 <button type="button" class="film-details__control-button ${addClassBySubmit(data.user_details.favorite, 'film-details__control-button--active')} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
 </section>`);
 
-const createCommentTemplate = (commentId, array) => {
+const createCommentTemplate = (commentId, array, isDisabled) => {
   const commentBox = [];
 
   for (const element of array) {
     if (commentId.includes(element.id)) {
-
       const {id, author, comment, date, emotion} = element;
       const formatedDate = FormatTime.getDate(date, 'YYYY/MM/DD HH:mm');
       const humanizeDate = FormatTime.getHumanizeDate(date);
-
       commentBox.push(`<li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -45,7 +40,9 @@ const createCommentTemplate = (commentId, array) => {
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
               <span class="film-details__comment-day"  title="${formatedDate}">${humanizeDate}</span>
-              <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
+              <button class="film-details__comment-delete" data-comment-id="${id}"
+              ${isDisabled ? 'disabled' : ''}>
+              Delete</button>
             </p>
           </div>
       </li>`);
@@ -54,10 +51,12 @@ const createCommentTemplate = (commentId, array) => {
   return commentBox;
 };
 
-const createNewCommentTemplate = (emojiIcon, checkedEmojiItem, comment) => `<div class="film-details__new-comment">
+const createNewCommentTemplate = (emojiIcon, checkedEmojiItem, comment, isDisabled) => `<div class="film-details__new-comment">
         <div class="film-details__add-emoji-label">${emojiIcon !== '' ? `<img src="/images/emoji/${emojiIcon}.png" width="55" height="55" alt="emoji-${emojiIcon}">` : ''}</div>
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(comment)}</textarea>
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"
+          ${isDisabled ? 'disabled' : ''}
+          >${he.encode(comment)}</textarea>
         </label>
         <div class="film-details__emoji-list">
         ${EMOJIS.map((emoji) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${addCheckedProperty(`emoji-${emoji}` === checkedEmojiItem)}>
@@ -66,7 +65,6 @@ const createNewCommentTemplate = (emojiIcon, checkedEmojiItem, comment) => `<div
         </label>`).join('')}
         </div>
       </div>`;
-
 const createFilmPopupTemplate = (data, array) => {
   const {title, runtime, genre, description, poster, director, writers, actors} = data['film_info'];
   const rating = data['film_info']['total_rating'];
@@ -74,7 +72,7 @@ const createFilmPopupTemplate = (data, array) => {
   const ageRating = data['film_info']['age_rating'];
   const alternativeTitle = data['film_info']['alternative_title'];
   const country = data['film_info']['release']['release_country'];
-  const {emojiIcon, checkedEmojiItem, isDisabled, comment} = data;
+  const {emojiIcon, checkedEmojiItem, isDisabled, isDeleting, comment} = data;
 
   const dateFormat = FormatTime.getDate(date, 'D MMMM YYYY');
 
@@ -124,7 +122,7 @@ const createFilmPopupTemplate = (data, array) => {
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
           <ul class="film-details__comments-list">
-            ${createCommentTemplate(data.comments, array).join('')}
+            ${createCommentTemplate(data.comments, array, isDisabled, isDeleting).join('')}
           </ul>
             ${createNewCommentTemplate(emojiIcon, checkedEmojiItem, comment, isDisabled)}
         </section>
@@ -132,6 +130,4 @@ const createFilmPopupTemplate = (data, array) => {
     </form>
   </section>`;
 };
-
-
 export {createFilmPopupTemplate};
