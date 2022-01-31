@@ -16,9 +16,8 @@ const createFilmListContainerTemplate = (filterType) => {
   </section>`;
 };
 
-export default class NoFilmContainer extends AbstractView {
+export default class NoFilm extends AbstractView {
   #films = null;
-  #container = null;
 
   constructor(films) {
     super();

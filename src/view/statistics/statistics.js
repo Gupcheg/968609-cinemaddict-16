@@ -1,16 +1,24 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from '../smart-view.js';
-import {StatisticsType, CHART_VALUE} from '../../consts.js';
+import {StatisticsType} from '../../consts.js';
 import {getGenres, filmsToFilterMap} from '../../utils/statistics.js';
 import {createStatsScreenTemplate} from './statistics-tpl.js';
-
+const CHART_VALUE = {
+  TYPE: 'horizontalBar',
+  BACKGROUND_COLOR: '#ffe800',
+  ANCOR: 'start',
+  THICKNESS: 24,
+  FONT_SIZE: 20,
+  FONT_COLOR: '#fff',
+  OFFSET: 40,
+  PADDING: 100,
+  HEIGHT: 50,
+};
 const renderChart = (chartContainer, films) => {
   const BAR_HEIGHT = CHART_VALUE.HEIGHT;
-
   const genres = [];
   const genresCounts = [];
-
   Object
     .entries(getGenres(films))
     .sort((a, b) => b[1] - a[1])
@@ -18,9 +26,7 @@ const renderChart = (chartContainer, films) => {
       genres.push(name);
       genresCounts.push(count);
     });
-
   chartContainer.height = BAR_HEIGHT * Object.values(genres).length;
-
   return new Chart(chartContainer, {
     plugins: [ChartDataLabels],
     type: CHART_VALUE.TYPE,
@@ -78,7 +84,6 @@ const renderChart = (chartContainer, films) => {
       },
     },
   });};
-
 export default class Statistics extends SmartView {
   #chart = null;
   #films = null;
@@ -86,21 +91,18 @@ export default class Statistics extends SmartView {
   #watchedFilms = null;
   #data = null;
   #filters = null;
-
   constructor(films) {
     super();
-
     this.#films = films;
     this.#currentFilter = StatisticsType.ALL;
     this.#filters = this.#getFilters();
     this.#watchedFilms = this.#films.filter((film) => film['user_details']['already_watched']);
     this.#data = filmsToFilterMap[this.#currentFilter](this.#watchedFilms);
-
     this.setStatsFilterChangeHandler();
   }
 
   get template() {
-    return createStatsScreenTemplate(this.#data, this.#currentFilter, this.#filters);
+    return createStatsScreenTemplate(this.#data, this.#currentFilter, this.#filters, this.#watchedFilms);
   }
 
   removeElement = () => {
@@ -116,7 +118,6 @@ export default class Statistics extends SmartView {
     if (this.#chart !== null) {
       this.#chart = null;
     }
-
     const chartContainer = document.querySelector('.statistic__chart');
     this.#chart = renderChart(chartContainer, this.#data);
   }
