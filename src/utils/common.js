@@ -1,7 +1,7 @@
 import FormatTime from './format-time.js';
 
 const NUMBER_MINUTES_PER_HOUR = 60;
-const changeWord = (array, word) => array.length === 1 ? word : `${word}s`;
+const changeWord = (arr, word) => arr.length === 1 ? word : `${word}s`;
 
 const addClassBySubmit = (submit, className) => submit ? className : '';
 

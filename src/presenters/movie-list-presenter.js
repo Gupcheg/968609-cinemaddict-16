@@ -339,6 +339,8 @@ export default class MovieListPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
+    this.#closePopup();
+    this.#renderedFilmCount = FILM_COUNT.PER_STEP;
     this.#currentSortType = sortType;
     this.#clearBoard();
     this.#renderFilmList();

@@ -51,7 +51,7 @@ const getGenres = (films) => {
   const genresForStatistics = {};
 
   films
-    .reduce((array, film) => array.concat(film['film_info']['genre']), [])
+    .reduce((arr, film) => arr.concat(film['film_info']['genre']), [])
     .forEach((genre) => {
       if (genresForStatistics[genre]) {
         genresForStatistics[genre]++;
@@ -80,9 +80,9 @@ const getUserRank = (films) => {
     return TitleRank.FAN;
   } else if (totalWatch > StepsOfRank.FAN.MAX) {
     return TitleRank.MOVIE_BUFF;
-  } else {
-    return TitleRank.NONE;
   }
+  return TitleRank.NONE;
+
 };
 
 export {filmsToFilterMap, getTotalDuration, getGenres, getTopGenre, getUserRank};
