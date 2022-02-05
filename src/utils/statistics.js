@@ -51,7 +51,7 @@ const getGenres = (films) => {
   const genresForStatistics = {};
 
   films
-    .reduce((arr, film) => arr.concat(film['film_info']['genre']), [])
+    .reduce((acc, film) => acc.concat(film['film_info']['genre']), [])
     .forEach((genre) => {
       if (genresForStatistics[genre]) {
         genresForStatistics[genre]++;

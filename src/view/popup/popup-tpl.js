@@ -9,10 +9,10 @@ const renderFilmDetailsTable = (name, value) => (
   <td class="film-details__cell">${value}</td>
 </tr>`
 );
-const renderElementGenre = (arr) => {
-  if (arr.length > 0) {
+const renderElementGenre = (genres) => {
+  if (genres.length > 0) {
     const genresBox = [];
-    for (const element of arr)
+    for (const element of genres)
     {genresBox.push(`<span class="film-details__genre">${element}</span>`);}
     return genresBox;
   }
@@ -23,10 +23,10 @@ export const createControlTemplate = (data) => (`<section class="film-details__c
 <button type="button" class="film-details__control-button ${addClassBySubmit(data.user_details.favorite, 'film-details__control-button--active')} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
 </section>`);
 
-const createCommentTemplate = (commentId, arr, isDisabled) => {
+const createCommentTemplate = (commentId, templates, isDisabled) => {
   const commentsBox = [];
 
-  for (const element of arr) {
+  for (const element of templates) {
     if (commentId.includes(element.id)) {
       const {id, author, comment, date, emotion} = element;
       const formatedDate = FormatTime.getDate(date, 'YYYY/MM/DD HH:mm');
@@ -65,7 +65,7 @@ const createNewCommentTemplate = (emojiIcon, checkedEmojiItem, comment, isDisabl
         </label>`).join('')}
         </div>
       </div>`;
-const createFilmPopupTemplate = (data, arr) => {
+const createFilmPopupTemplate = (data, dataOfFilms) => {
   const {title, runtime, genre, description, poster, director, writers, actors} = data['film_info'];
   const rating = data['film_info']['total_rating'];
   const date = data['film_info']['release']['date'];
@@ -122,7 +122,7 @@ const createFilmPopupTemplate = (data, arr) => {
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
           <ul class="film-details__comments-list">
-            ${createCommentTemplate(data.comments, arr, isDisabled, isDeleting).join('')}
+            ${createCommentTemplate(data.comments, dataOfFilms, isDisabled, isDeleting).join('')}
           </ul>
             ${createNewCommentTemplate(emojiIcon, checkedEmojiItem, comment, isDisabled)}
         </section>
